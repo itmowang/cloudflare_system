@@ -1,0 +1,19 @@
+{
+  "name": "@cloudflare_system/workers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "wrangler dev index.ts",
+    "build": "npx tsc && wrangler deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "wrangler": "^3.72.3"
+  },
+  "dependencies": {
+    "typescript": "^5.5.4"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "cloudflare_system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm dev:web && pnpm dev:works",
+    "dev:web": "",
+    "dev:works": ""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^5.5.4"
+  }
+}
