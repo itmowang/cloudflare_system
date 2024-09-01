@@ -1,3 +1,8 @@
 name = "mail_workers" # todo
 main = "./dist/index.js"
 compatibility_date = "2022-10-10"
+
+[[d1_databases]]
+binding = "DB"  
+database_name = "mail_d1"
+database_id = "8b98be41-837e-4e75-9986-9aac5564f90c"

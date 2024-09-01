@@ -5,7 +5,8 @@
   "main": "index.ts",
   "scripts": {
     "dev": "wrangler dev index.ts",
-    "build": "npx tsc && wrangler deploy"
+    "build": "npx tsc && wrangler deploy",
+    "inits":"npx prisma migrate dev --name init"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +15,9 @@
     "wrangler": "^3.72.3"
   },
   "dependencies": {
+    "@prisma/adapter-d1": "^5.19.0",
+    "@prisma/client": "^5.19.0",
+    "prisma": "^5.19.0",
     "typescript": "^5.5.4"
   }
 }

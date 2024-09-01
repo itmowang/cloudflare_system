@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "deploys": "pnpm run build && wrangler pages  deploy"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
     "vue": "^3.4.38"
   },
   "devDependencies": {
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "wrangler": "^3.72.3"
   }
 }
