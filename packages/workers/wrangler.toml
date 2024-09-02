@@ -4,5 +4,5 @@ compatibility_date = "2022-10-10"
 
 [[d1_databases]]
 binding = "DB"  
-database_name = "mail_d1"
-database_id = "8b98be41-837e-4e75-9986-9aac5564f90c"
+database_name = "mailworker"
+database_id = "e2636b1d-7f72-4d66-bdb4-6c8ac92f8125"
