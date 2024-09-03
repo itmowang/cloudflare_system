@@ -1551,134 +1551,6 @@ var Hono2 = class extends Hono {
   }
 };
 
-// ../../node_modules/.pnpm/hono@4.5.10/node_modules/hono/dist/utils/cookie.js
-var algorithm = { name: "HMAC", hash: "SHA-256" };
-var getCryptoKey = async (secret) => {
-  const secretBuf = typeof secret === "string" ? new TextEncoder().encode(secret) : secret;
-  return await crypto.subtle.importKey("raw", secretBuf, algorithm, false, ["sign", "verify"]);
-};
-var verifySignature = async (base64Signature, value, secret) => {
-  try {
-    const signatureBinStr = atob(base64Signature);
-    const signature = new Uint8Array(signatureBinStr.length);
-    for (let i = 0, len = signatureBinStr.length; i < len; i++) {
-      signature[i] = signatureBinStr.charCodeAt(i);
-    }
-    return await crypto.subtle.verify(algorithm, secret, signature, new TextEncoder().encode(value));
-  } catch (e) {
-    return false;
-  }
-};
-var validCookieNameRegEx = /^[\w!#$%&'*.^`|~+-]+$/;
-var validCookieValueRegEx = /^[ !#-:<-[\]-~]*$/;
-var parse = (cookie, name) => {
-  const pairs = cookie.trim().split(";");
-  return pairs.reduce((parsedCookie, pairStr) => {
-    pairStr = pairStr.trim();
-    const valueStartPos = pairStr.indexOf("=");
-    if (valueStartPos === -1) {
-      return parsedCookie;
-    }
-    const cookieName = pairStr.substring(0, valueStartPos).trim();
-    if (name && name !== cookieName || !validCookieNameRegEx.test(cookieName)) {
-      return parsedCookie;
-    }
-    let cookieValue = pairStr.substring(valueStartPos + 1).trim();
-    if (cookieValue.startsWith('"') && cookieValue.endsWith('"')) {
-      cookieValue = cookieValue.slice(1, -1);
-    }
-    if (validCookieValueRegEx.test(cookieValue)) {
-      parsedCookie[cookieName] = decodeURIComponent_(cookieValue);
-    }
-    return parsedCookie;
-  }, {});
-};
-var parseSigned = async (cookie, secret, name) => {
-  const parsedCookie = {};
-  const secretKey = await getCryptoKey(secret);
-  for (const [key, value] of Object.entries(parse(cookie, name))) {
-    const signatureStartPos = value.lastIndexOf(".");
-    if (signatureStartPos < 1) {
-      continue;
-    }
-    const signedValue = value.substring(0, signatureStartPos);
-    const signature = value.substring(signatureStartPos + 1);
-    if (signature.length !== 44 || !signature.endsWith("=")) {
-      continue;
-    }
-    const isVerified = await verifySignature(signature, signedValue, secretKey);
-    parsedCookie[key] = isVerified ? signedValue : false;
-  }
-  return parsedCookie;
-};
-
-// ../../node_modules/.pnpm/hono@4.5.10/node_modules/hono/dist/helper/cookie/index.js
-var getCookie = (c, key, prefix) => {
-  const cookie = c.req.raw.headers.get("Cookie");
-  if (typeof key === "string") {
-    if (!cookie) {
-      return void 0;
-    }
-    let finalKey = key;
-    if (prefix === "secure") {
-      finalKey = "__Secure-" + key;
-    } else if (prefix === "host") {
-      finalKey = "__Host-" + key;
-    }
-    const obj2 = parse(cookie, finalKey);
-    return obj2[finalKey];
-  }
-  if (!cookie) {
-    return {};
-  }
-  const obj = parse(cookie);
-  return obj;
-};
-var getSignedCookie = async (c, secret, key, prefix) => {
-  const cookie = c.req.raw.headers.get("Cookie");
-  if (typeof key === "string") {
-    if (!cookie) {
-      return void 0;
-    }
-    let finalKey = key;
-    if (prefix === "secure") {
-      finalKey = "__Secure-" + key;
-    } else if (prefix === "host") {
-      finalKey = "__Host-" + key;
-    }
-    const obj2 = await parseSigned(cookie, secret, finalKey);
-    return obj2[finalKey];
-  }
-  if (!cookie) {
-    return {};
-  }
-  const obj = await parseSigned(cookie, secret);
-  return obj;
-};
-
-// ../../node_modules/.pnpm/hono@4.5.10/node_modules/hono/dist/http-exception.js
-var HTTPException = class extends Error {
-  res;
-  status;
-  constructor(status = 500, options) {
-    super(options?.message, { cause: options?.cause });
-    this.res = options?.res;
-    this.status = status;
-  }
-  getResponse() {
-    if (this.res) {
-      const newResponse = new Response(this.res.body, {
-        status: this.status,
-        headers: this.res.headers
-      });
-      return newResponse;
-    }
-    return new Response(this.message, {
-      status: this.status
-    });
-  }
-};
-
 // ../../node_modules/.pnpm/hono@4.5.10/node_modules/hono/dist/utils/encode.js
 var decodeBase64Url = (str) => {
   return decodeBase64(str.replace(/_|-/g, (m) => ({ _: "/", "-": "+" })[m] ?? m));
@@ -1815,14 +1687,14 @@ var utf8Decoder = new TextDecoder();
 
 // ../../node_modules/.pnpm/hono@4.5.10/node_modules/hono/dist/utils/jwt/jws.js
 async function signing(privateKey, alg, data) {
-  const algorithm2 = getKeyAlgorithm(alg);
-  const cryptoKey = await importPrivateKey(privateKey, algorithm2);
-  return await crypto.subtle.sign(algorithm2, cryptoKey, data);
+  const algorithm = getKeyAlgorithm(alg);
+  const cryptoKey = await importPrivateKey(privateKey, algorithm);
+  return await crypto.subtle.sign(algorithm, cryptoKey, data);
 }
 async function verifying(publicKey, alg, signature, data) {
-  const algorithm2 = getKeyAlgorithm(alg);
-  const cryptoKey = await importPublicKey(publicKey, algorithm2);
-  return await crypto.subtle.verify(algorithm2, cryptoKey, signature, data);
+  const algorithm = getKeyAlgorithm(alg);
+  const cryptoKey = await importPublicKey(publicKey, algorithm);
+  return await crypto.subtle.verify(algorithm, cryptoKey, signature, data);
 }
 function pemToBinary(pem) {
   return decodeBase64(pem.replace(/-+(BEGIN|END).*/g, "").replace(/\s/g, ""));
@@ -2061,110 +1933,25 @@ var decode = (token) => {
 var Jwt = { sign, verify, decode };
 
 // ../../node_modules/.pnpm/hono@4.5.10/node_modules/hono/dist/middleware/jwt/jwt.js
-var jwt = (options) => {
-  if (!options || !options.secret) {
-    throw new Error('JWT auth middleware requires options for "secret"');
-  }
-  if (!crypto.subtle || !crypto.subtle.importKey) {
-    throw new Error("`crypto.subtle.importKey` is undefined. JWT auth middleware requires it.");
-  }
-  return async function jwt2(ctx, next) {
-    const credentials = ctx.req.raw.headers.get("Authorization");
-    let token;
-    if (credentials) {
-      const parts = credentials.split(/\s+/);
-      if (parts.length !== 2) {
-        const errDescription = "invalid credentials structure";
-        throw new HTTPException(401, {
-          message: errDescription,
-          res: unauthorizedResponse({
-            ctx,
-            error: "invalid_request",
-            errDescription
-          })
-        });
-      } else {
-        token = parts[1];
-      }
-    } else if (options.cookie) {
-      if (typeof options.cookie == "string") {
-        token = getCookie(ctx, options.cookie);
-      } else if (options.cookie.secret) {
-        if (options.cookie.prefixOptions) {
-          token = await getSignedCookie(
-            ctx,
-            options.cookie.secret,
-            options.cookie.key,
-            options.cookie.prefixOptions
-          );
-        } else {
-          token = await getSignedCookie(ctx, options.cookie.secret, options.cookie.key);
-        }
-      } else {
-        if (options.cookie.prefixOptions) {
-          token = getCookie(ctx, options.cookie.key, options.cookie.prefixOptions);
-        } else {
-          token = getCookie(ctx, options.cookie.key);
-        }
-      }
-    }
-    if (!token) {
-      const errDescription = "no authorization included in request";
-      throw new HTTPException(401, {
-        message: errDescription,
-        res: unauthorizedResponse({
-          ctx,
-          error: "invalid_request",
-          errDescription
-        })
-      });
-    }
-    let payload;
-    let cause;
-    try {
-      payload = await Jwt.verify(token, options.secret, options.alg);
-    } catch (e) {
-      cause = e;
-    }
-    if (!payload) {
-      throw new HTTPException(401, {
-        message: "Unauthorized",
-        res: unauthorizedResponse({
-          ctx,
-          error: "invalid_token",
-          statusText: "Unauthorized",
-          errDescription: "token verification failure"
-        }),
-        cause
-      });
-    }
-    ctx.set("jwtPayload", payload);
-    await next();
-  };
-};
-function unauthorizedResponse(opts) {
-  return new Response("Unauthorized", {
-    status: 401,
-    statusText: opts.statusText,
-    headers: {
-      "WWW-Authenticate": `Bearer realm="${opts.ctx.req.url}",error="${opts.error}",error_description="${opts.errDescription}"`
-    }
-  });
-}
 var verify2 = Jwt.verify;
 var decode2 = Jwt.decode;
 var sign2 = Jwt.sign;
 
 // src/user.ts
 var user_default = (app2, path) => {
-  app2.use(`${path}/*`, jwt({ secret: "it-is-very-secret" }));
-  app2.post(`${path}/register`, (c) => {
-    const payload = c.get("jwtPayload");
-    return c.json(payload);
+  app2.post(`${path}/register`, async (c) => {
+    console.log("register");
+    const { email, password } = await c.req.json();
+    console.log(email, password);
+    return c.json({
+      message: "register success"
+    });
   });
-  app2.get(`${path}/test`, (c) => {
-    const payload = c.get("jwtPayload");
-    return c.json(payload);
+  app2.get(`${path}/test`, async (c) => {
+    const payload = { "sub": "1234567890", "name": "John Doe", "iat": 1516239022 };
+    const secret = "your-secret-key";
+    const token = await sign2(payload, secret);
+    return c.json(token);
   });
 };
 
