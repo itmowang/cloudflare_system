@@ -62,23 +62,27 @@ const loginBtn = async () => {
                     <div>
                         <label for="email1"
                             class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-                        <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-8"
+                        <InputText id="email1" type="text"  placeholder="Email address" class="w-full md:w-[30rem] mb-8"
                             v-model="email" />
 
                         <label for="password1"
                             class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
-                        <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true"
+                        <Password id="password1" v-model="password"  placeholder="Password" :toggleMask="true"
                             class="mb-4" fluid :feedback="false"></Password>
 
                         <div class="flex items-center justify-between mt-2 mb-8 gap-8">
                             <div class="flex items-center">
                                 <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
-                                <label for="rememberme1">Remember me</label>
+                                <label for="rememberme1">记住密码</label>
                             </div>
-                            <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot
-                                password?</span>
+                            <span
+                                class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">忘记密码?</span>
                         </div>
                         <Button label="Sign In" class="w-full" @click="loginBtn"></Button>
+                        <div class="mt-2">
+                            <a
+                               href="/auth/register"  class="font-medium no-underline ml-2  cursor-pointer text-primary text-center mt-4">前往注册</a>
+                        </div>
                     </div>
                 </div>
             </div>

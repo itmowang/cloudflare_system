@@ -1,31 +1,38 @@
 <script setup>
 import { useToast } from 'primevue/usetoast';
 import { ref } from 'vue';
-import { login } from '@/api/user.js'
+import { register } from '@/api/user.js'
 
 const email = ref('');
 const password = ref('');
-const checked = ref(false);
-
+const rePassword = ref('');
 const toast = useToast();
-const loginBtn = async () => {
-    const res = await login({
-        email: email.value,
-        password: password.value
-    })
-
-    if (res.status == 200) {
-        console.log('Login success');
-        toast.add({ severity: 'success', summary: '登录成功', detail: '请等待3s进入仪表盘。。。', life: 3000 });
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 3000);
+const registrBtn = async () => {
+    if (!email.value || !password.value || !rePassword.value) {
+        toast.add({ severity: 'error', summary: '错误', detail: '请输入完整信息', life: 3000 });
+        return;
+    } else if (password.value != rePassword.value) {
+        toast.add({ severity: 'error', summary: '错误', detail: '两次密码输入不一致', life: 3000 });
+        return;
     } else {
-        console.log('Login failed');
+        const res = await register({
+            email: email.value,
+            password: password.value
+        })
+
+        if (res.status == 200) {
+            console.log('Login success');
+            toast.add({ severity: 'success', summary: '注册成功', detail: '请等待3s进入登录页。。。', life: 3000 });
+            setTimeout(() => {
+                window.location.href = '/auth/Login';
+            }, 3000);
+        } else {
+            console.log('Login failed');
+        }
     }
+
+
 };
-
-
 </script>
 
 <template>
@@ -55,8 +62,7 @@ const loginBtn = async () => {
                                     fill="var(--primary-color)" />
                             </g>
                         </svg>
-                        <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">邮箱控制台!</div>
-                        <span class="text-muted-color font-medium">Sign in to continue</span>
+                        <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">注册用户</div>
                     </div>
 
                     <div>
@@ -70,16 +76,21 @@ const loginBtn = async () => {
                         <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true"
                             class="mb-4" fluid :feedback="false"></Password>
 
-                        <div class="flex items-center justify-between mt-2 mb-8 gap-8">
-                            <div class="flex items-center">
-                                <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
-                                <label for="rememberme1">Remember me</label>
-                            </div>
-                            <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot
-                                password?</span>
+
+                        <label for="password1"
+                            class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">RePassword</label>
+                        <Password id="password1" v-model="rePassword" placeholder="rePassword" :toggleMask="true"
+                            class="mb-4" fluid :feedback="false"></Password>
+
+                        <Button label="Sign In" class="w-full" @click="registrBtn"></Button>
+
+                        <div class="mt-2">
+                            <a href="/auth/login"
+                                class="font-medium no-underline ml-2  cursor-pointer text-primary text-center mt-4">前往登录</a>
                         </div>
-                        <Button label="Sign In" class="w-full" @click="loginBtn"></Button>
                     </div>
+
+                    
                 </div>
             </div>
         </div>

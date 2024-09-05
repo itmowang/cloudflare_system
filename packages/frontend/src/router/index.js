@@ -18,6 +18,7 @@ const router = createRouter({
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue')
                 }
+               
             ]
         },
         {
@@ -35,6 +36,11 @@ const router = createRouter({
             path: '/auth/login',
             name: 'login',
             component: () => import('@/views/pages/auth/Login.vue')
+        },
+        {
+            path: '/auth/register',
+            name: 'register',
+            component: () => import('@/views/pages/auth/Registr.vue')
         },
         {
             path: '/auth/access',
