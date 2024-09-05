@@ -1,6 +1,5 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
-
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -54,5 +53,27 @@ const router = createRouter({
         }
     ]
 });
+
+const whiteList = ['/auth/login', '/auth/register', '/auth/access', '/auth/error'];
+
+
+router.beforeEach((to, from) => {
+
+    const token = localStorage.getItem('token');
+
+
+   if(whiteList.some((path)=>path == to.path)){
+    return true
+   }else{
+     if(token){
+        return true
+     }else{
+        return '/auth/login'
+     }
+   }
+   
+
+    return false
+  })
 
 export default router;

@@ -9,19 +9,25 @@ const checked = ref(false);
 
 const toast = useToast();
 const loginBtn = async () => {
-    const res = await login({
-        email: email.value,
-        password: password.value
-    })
-
-    if (res.status == 200) {
-        console.log('Login success');
-        toast.add({ severity: 'success', summary: '登录成功', detail: '请等待3s进入仪表盘。。。', life: 3000 });
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 3000);
+    if (!email.value || !password.value) {
+        toast.add({ severity: 'error', summary: '登录失败', detail: '请输入邮箱和密码', life: 3000 });
+        return;
     } else {
-        console.log('Login failed');
+        const res = await login({
+            email: email.value,
+            password: password.value
+        })
+
+        if (res.status == 200) {
+            const token = res.data.token;
+            localStorage.setItem('token', token);
+            toast.add({ severity: 'success', summary: '登录成功', detail: '请等待3s进入仪表盘。。。', life: 3000 });
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 3000);
+        } else {
+            console.log('Login failed');
+        }
     }
 };
 
@@ -62,12 +68,12 @@ const loginBtn = async () => {
                     <div>
                         <label for="email1"
                             class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-                        <InputText id="email1" type="text"  placeholder="Email address" class="w-full md:w-[30rem] mb-8"
+                        <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-8"
                             v-model="email" />
 
                         <label for="password1"
                             class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
-                        <Password id="password1" v-model="password"  placeholder="Password" :toggleMask="true"
+                        <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true"
                             class="mb-4" fluid :feedback="false"></Password>
 
                         <div class="flex items-center justify-between mt-2 mb-8 gap-8">
@@ -80,8 +86,8 @@ const loginBtn = async () => {
                         </div>
                         <Button label="Sign In" class="w-full" @click="loginBtn"></Button>
                         <div class="mt-2">
-                            <a
-                               href="/auth/register"  class="font-medium no-underline ml-2  cursor-pointer text-primary text-center mt-4">前往注册</a>
+                            <a href="/auth/register"
+                                class="font-medium no-underline ml-2  cursor-pointer text-primary text-center mt-4">前往注册</a>
                         </div>
                     </div>
                 </div>
