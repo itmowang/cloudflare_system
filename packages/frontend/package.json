@@ -1,9 +1,9 @@
 {
-    "name": "sakai-vue",
-    "version": "4.1.0",
+    "name": "@cloudflare_system/frontend",
+    "version": "1.0.0",
     "scripts": {
         "dev": "vite",
-        "build": "vite build",
+        "build": "vite build && wrangler pages  deploy ./dist",
         "preview": "vite preview",
         "lint": "eslint --fix . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
     },
