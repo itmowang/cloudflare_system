@@ -7,14 +7,17 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "pnpm dev:web && pnpm dev:works",
-    "dev:web": "",
-    "dev:works": ""
+    "dev": "pnpm -r dev",
+    "build": "pnpm -r build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "typescript": "^5.5.4"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "pnpm": ">=6.0.0"
   }
 }

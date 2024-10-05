@@ -1,5 +1,5 @@
 name = "mail_workers" # todo
-main = "./dist/index.js"
+main = "./dist/main.js"
 compatibility_date = "2022-10-10"
 
 [[d1_databases]]

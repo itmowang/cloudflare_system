@@ -7,7 +7,7 @@ import md5 from 'crypto-js/md5';
 
 
 export default (app: Hono, path: string) => {
-    // /api/user/register
+    // 用户注册
     app.post(`${path}/register`, async (c: Context) => {
         try {
             const prisma = Prisma(c)
@@ -18,15 +18,12 @@ export default (app: Hono, path: string) => {
                     password: md5(password).toString()
                 }
             });
-            console.log(res, 5555);
-
             return c.json({
                 status: 200,
                 data: res,
                 message: 'register success',
             })
         } catch (error) {
-
             return c.json({
                 status: 500,
                 message: 'register failed',
@@ -36,7 +33,7 @@ export default (app: Hono, path: string) => {
 
     })
 
-    // /api/user/login
+    // 用户登录
     app.post(`${path}/login`, async (c: any) => {
         try {
             const prisma = Prisma(c)

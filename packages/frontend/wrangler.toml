@@ -1,4 +1,4 @@
 name = "mailpages"
-pages_build_output_dir = "./dist"
+pages_build_output_dir = "../../dist/frontend"
 compatibility_date = "2023-10-12"
 send_metrics = false
